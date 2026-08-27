@@ -26,6 +26,7 @@ export interface Contract {
   };
   documents: string[];
   completedCount: number;
+  rejectionReason?: string;
 }
 
 export interface Payment {
@@ -179,6 +180,28 @@ export const mockContracts: Contract[] = [
     },
     documents: ["신분증/사업자등록증.png", "입금통장사본.png", "임대차계약서.png"],
     completedCount: 1,
+  },
+  {
+    id: "7",
+    type: "학원비",
+    name: "학원비(김하나)",
+    registeredAt: "2026-02-14",
+    approvalStatus: "반려",
+    paymentMethod: "수동",
+    transferAmount: 20000,
+    totalAmount: 21320,
+    senderName: "김하나",
+    counterparty: {
+      type: "사업자",
+      name: "김하나",
+      idNumber: "9876543210",
+      bank: "국민은행",
+      accountNumber: "123123123123",
+      accountHolder: "김하나",
+    },
+    documents: ["신분증/사업자등록증.png"],
+    completedCount: 0,
+    rejectionReason: "첨부서류(입금통장사본)가 누락되어 반려되었습니다. 서류를 다시 등록해 주세요.",
   },
 ];
 

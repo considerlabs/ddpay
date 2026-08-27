@@ -85,11 +85,11 @@ export default function StatusPage() {
             <div className="flex items-center justify-between mt-2">
               <div className="flex items-center gap-2">
                 <StatusBadge status={contract.approvalStatus} />
-                {contract.approvalStatus === "승인완료" && (
+                {contract.approvalStatus !== "반려" && (
                   <span className="text-xs text-gray-400">결제완료:{contract.completedCount}회</span>
                 )}
               </div>
-              {contract.approvalStatus === "승인완료" ? (
+              {contract.approvalStatus !== "반려" ? (
                 <button
                   onClick={() => setPayingContract(contract)}
                   className="px-3 py-1.5 rounded-lg bg-[var(--dd-orange)] text-white text-xs font-semibold"
@@ -102,6 +102,9 @@ export default function StatusPage() {
                 </button>
               )}
             </div>
+            {contract.approvalStatus === "반려" && contract.rejectionReason && (
+              <p className="text-xs text-red-500 mt-2">{contract.rejectionReason}</p>
+            )}
           </div>
         ))}
       </div>

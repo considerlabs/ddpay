@@ -61,6 +61,9 @@ export default function StatusDetailPage({ params }: { params: Promise<{ id: str
           <DetailRow label="결제방식" value={contract.paymentMethod} />
           <DetailRow label="결제일" value="미지정" />
           <DetailRow label="승인상태" value={<StatusBadge status={contract.approvalStatus} />} />
+          {contract.approvalStatus === "반려" && contract.rejectionReason && (
+            <p className="text-xs text-red-500 bg-red-50 rounded-lg px-3 py-2 mt-2">{contract.rejectionReason}</p>
+          )}
         </div>
 
         {/* 첨부서류 */}
