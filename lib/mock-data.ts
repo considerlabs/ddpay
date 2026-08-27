@@ -1,3 +1,5 @@
+import { useSyncExternalStore } from "react";
+
 export type ContractType = "월세" | "물류대금" | "경조사비" | "학원비" | "운영/용역비" | "운영비" | "인건비" | "배달비";
 export type ApprovalStatus = "승인대기" | "승인완료" | "반려";
 export type PaymentMethod = "수동" | "자동";
@@ -267,6 +269,34 @@ export function addUserContract(contract: Contract) {
   localStorage.setItem(USER_CONTRACTS_KEY, JSON.stringify(next));
 }
 
-export function getAllContracts(): Contract[] {
-  return [...loadUserContracts(), ...mockContracts];
+// useSyncExternalStore로 로컬스토리지를 읽으면 서버/클라이언트 첫 렌더 결과가
+// 항상 mockContracts로 일치해 하이드레이션 오류 없이, 하이드레이션 직후에만 안전하게 병합된다.
+let cachedRaw: string | null | undefined;
+let cachedContracts: Contract[] = mockContracts;
+
+function getContractsSnapshot(): Contract[] {
+  const raw = localStorage.getItem(USER_CONTRACTS_KEY);
+  if (raw !== cachedRaw) {
+    cachedRaw = raw;
+    let userContracts: Contract[] = [];
+    try {
+      userContracts = raw ? JSON.parse(raw) : [];
+    } catch {
+      userContracts = [];
+    }
+    cachedContracts = [...userContracts, ...mockContracts];
+  }
+  return cachedContracts;
+}
+
+function getContractsServerSnapshot(): Contract[] {
+  return mockContracts;
+}
+
+function subscribeContracts() {
+  return () => {};
+}
+
+export function useContracts(): Contract[] {
+  return useSyncExternalStore(subscribeContracts, getContractsSnapshot, getContractsServerSnapshot);
 }

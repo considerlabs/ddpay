@@ -63,7 +63,7 @@ export default function ContractPage() {
       type: contractType!,
       name: contractName,
       registeredAt: new Date().toISOString().slice(0, 10),
-      approvalStatus: "승인대기",
+      approvalStatus: "승인완료",
       paymentMethod: payMethod,
       transferAmount: Number(amount),
       totalAmount,
@@ -106,8 +106,7 @@ export default function ContractPage() {
           <div className="text-center">
             <h2 className="text-lg font-bold text-[var(--dd-green)]">계약등록 완료!</h2>
             <p className="text-sm text-gray-500 mt-2 leading-relaxed">
-              승인완료 후 결제처리가 가능합니다.<br />
-              승인완료처리는 약 1~2일 소요됩니다.
+              계약등록이 완료되어 바로 결제처리가 가능합니다.
             </p>
           </div>
           <button

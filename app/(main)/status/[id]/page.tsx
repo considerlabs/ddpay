@@ -3,7 +3,7 @@ import { use } from "react";
 import { notFound } from "next/navigation";
 import { PageHeader } from "@/components/page-header";
 import { StatusBadge } from "@/components/status-badge";
-import { mockContracts, formatAmount } from "@/lib/mock-data";
+import { useContracts, mockContracts, formatAmount } from "@/lib/mock-data";
 import { FileText } from "lucide-react";
 
 interface Row {
@@ -22,8 +22,13 @@ function DetailRow({ label, value }: Row) {
 
 export default function StatusDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
-  const contract = mockContracts.find((c) => c.id === id);
-  if (!contract) notFound();
+  const contracts = useContracts();
+  // useSyncExternalStore가 하이드레이션 직후 실제 스냅샷으로 교체하기 전까지는
+  // mockContracts 참조 그대로이므로, 그 사이에는 아직 못 찾았다고 단정하지 않는다.
+  const hasSynced = typeof window !== "undefined" && contracts !== mockContracts;
+  const contract = contracts.find((c) => c.id === id);
+  if (hasSynced && !contract) notFound();
+  if (!contract) return null;
 
   return (
     <div className="flex flex-col">
@@ -102,7 +107,7 @@ export default function StatusDetailPage({ params }: { params: Promise<{ id: str
           <DetailRow label="계좌송금 완료 횟수" value="0회" />
           <DetailRow label="계좌송금 총금액" value={formatAmount(0)} />
           <p className="text-[10px] text-gray-400 mt-2">
-            * 자세한 완료내역은 "결제내역 상세" 에서 확인해주세요.
+            * 자세한 완료내역은 &quot;결제내역 상세&quot; 에서 확인해주세요.
           </p>
         </div>
       </div>
