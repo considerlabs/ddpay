@@ -14,7 +14,7 @@ export default function HomePage() {
           깐부치킨 울릉도점 님
         </span>
         <div className="flex items-center gap-1">
-          <span className="text-xs font-black tracking-widest text-[var(--dd-green)]">PAYCORE</span>
+          <span className="text-xs font-black tracking-widest text-[var(--dd-green)]">DDPAY</span>
         </div>
       </header>
 
@@ -28,7 +28,7 @@ export default function HomePage() {
             </h2>
             <p className="text-[10px] text-green-200 mt-2 leading-relaxed">
               현금결제가 필요한 모든 송금,<br />
-              <span className="text-white font-bold">"페이코어"</span>는 쉽고, 효율적인<br />
+              <span className="text-white font-bold">"디디페이"</span>는 쉽고, 효율적인<br />
               결제 솔루션을 제공합니다.
             </p>
           </div>

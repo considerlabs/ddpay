@@ -1,9 +1,9 @@
-# 인수인계 — ddpay-web (페이코어 APP)
+# 인수인계 — ddpay-web (디디페이 APP)
 
 작성일: 2026-08-27
 
 ## 1. 프로젝트 개요
-- 나름코퍼레이션 "페이코어 APP" 중 **비즈링크(B2B 구매대행)** 화면 프론트엔드 (`plan.pdf` 기획서 참고)
+- 나름코퍼레이션 "디디페이 APP" 중 **비즈링크(B2B 구매대행)** 화면 프론트엔드 (`plan.pdf` 기획서 참고)
 - Next.js 16.2.9 (App Router, Turbopack) + React 19 + Tailwind v4 + shadcn/ui(base-ui) 기반 모바일 웹
 - 현재 백엔드 미연동, `lib/mock-data.ts` / `lib/mock-suppliers.ts` 목데이터로 화면 동작
 

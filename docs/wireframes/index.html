@@ -1,0 +1,1304 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>디디페이 APP — 화면설계 프로토타입</title>
+<style>
+  :root {
+    --dd-green: #1a7a3c;
+    --dd-green-light: #e8f5ec;
+    --dd-orange: #e8891a;
+    --dd-orange-light: #fff4e6;
+    --bg: #f5f5f5;
+    --ink: #111;
+    --muted: #8a8a8a;
+    --line: #ececec;
+    --card: #fff;
+    --phone-w: 390px;
+    --phone-h: 780px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: "Pretendard", "Apple SD Gothic Neo", "Noto Sans KR", system-ui, sans-serif;
+    background: #e8ebe9;
+    color: var(--ink);
+    min-height: 100vh;
+  }
+  .shell {
+    display: grid;
+    grid-template-columns: 240px 1fr 340px;
+    min-height: 100vh;
+  }
+  @media (max-width: 1100px) {
+    .shell { grid-template-columns: 1fr; }
+    .nav, .desc { max-height: 280px; overflow: auto; }
+    .stage { padding: 16px !important; }
+  }
+
+  /* Left nav */
+  .nav {
+    background: #121712;
+    color: #fff;
+    padding: 20px 14px;
+    overflow-y: auto;
+  }
+  .nav h1 { font-size: 14px; font-weight: 800; letter-spacing: 0.04em; color: #7dcea0; margin-bottom: 4px; }
+  .nav .sub { font-size: 11px; color: #8a9; margin-bottom: 18px; line-height: 1.4; }
+  .nav .group { font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: #667; margin: 14px 6px 6px; }
+  .nav button {
+    display: block; width: 100%; text-align: left;
+    background: transparent; border: 0; color: #ccd; padding: 9px 10px;
+    border-radius: 10px; font-size: 13px; cursor: pointer; margin-bottom: 2px;
+  }
+  .nav button:hover { background: #1e2a20; color: #fff; }
+  .nav button.active { background: var(--dd-green); color: #fff; font-weight: 700; }
+
+  /* Stage */
+  .stage {
+    display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
+    padding: 28px 20px 40px; gap: 14px;
+  }
+  .stage-title { font-size: 13px; color: #445; font-weight: 600; }
+  .phone {
+    width: var(--phone-w); height: var(--phone-h);
+    background: var(--bg); border-radius: 36px;
+    border: 10px solid #1a1a1a; box-shadow: 0 24px 60px rgba(0,0,0,.22);
+    overflow: hidden; position: relative; display: flex; flex-direction: column;
+  }
+  .phone-scroll { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+  .phone-scroll::-webkit-scrollbar { width: 0; }
+
+  /* Right desc */
+  .desc {
+    background: #fff; border-left: 1px solid #ddd; padding: 22px 20px; overflow-y: auto;
+  }
+  .desc h2 { font-size: 18px; font-weight: 800; margin-bottom: 6px; }
+  .desc .route { font-size: 12px; color: var(--dd-green); font-family: ui-monospace, monospace; margin-bottom: 14px; }
+  .desc h3 { font-size: 12px; font-weight: 700; color: #555; margin: 16px 0 6px; text-transform: uppercase; letter-spacing: 0.04em; }
+  .desc p, .desc li { font-size: 13px; line-height: 1.55; color: #333; }
+  .desc ul { padding-left: 18px; }
+  .desc li { margin-bottom: 4px; }
+  .tag {
+    display: inline-block; font-size: 11px; padding: 3px 8px; border-radius: 999px;
+    background: var(--dd-green-light); color: var(--dd-green); font-weight: 700; margin-right: 4px;
+  }
+
+  /* Shared UI bits inside phone */
+  .ph { position: sticky; top: 0; z-index: 5; background: #fff; border-bottom: 1px solid var(--line); height: 52px;
+    display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 700; }
+  .ph .back { position: absolute; left: 12px; font-size: 22px; color: #555; background: none; border: 0; cursor: pointer; }
+  .bnav {
+    position: absolute; bottom: 0; left: 0; right: 0; height: 58px; background: #fff;
+    border-top: 1px solid #e5e5e5; display: grid; grid-template-columns: repeat(5,1fr);
+    font-size: 10px; color: #aaa; z-index: 6;
+  }
+  .bnav div { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; }
+  .bnav .on { color: var(--dd-green); font-weight: 700; }
+  .bnav .ico { font-size: 16px; }
+  .pad { padding: 14px 16px 70px; }
+  .pad-nb { padding: 14px 16px 20px; }
+  .card {
+    background: var(--card); border: 1px solid var(--line); border-radius: 16px;
+    padding: 14px; box-shadow: 0 1px 2px rgba(0,0,0,.04); margin-bottom: 10px;
+  }
+  .btn {
+    display: flex; align-items: center; justify-content: center; height: 44px;
+    border-radius: 12px; border: 0; font-size: 14px; font-weight: 700; cursor: pointer; width: 100%;
+  }
+  .btn-g { background: var(--dd-green); color: #fff; }
+  .btn-o { background: var(--dd-orange); color: #fff; }
+  .btn-ol { background: #fff; border: 1.5px solid #ddd; color: #555; }
+  .btn-od { background: #fff; border: 2px solid var(--dd-orange); color: var(--dd-orange); }
+  .btn:disabled, .btn.disabled { background: #d4d4d4; color: #999; border-color: #d4d4d4; }
+  .row { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+  .muted { color: var(--muted); font-size: 12px; }
+  .xs { font-size: 11px; color: #999; }
+  .label { font-size: 12px; color: #777; margin-bottom: 6px; }
+  .input {
+    height: 44px; border: 1px solid #ddd; border-radius: 12px; padding: 0 12px;
+    width: 100%; font-size: 14px; background: #fff; margin-bottom: 10px;
+  }
+  .badge-g { color: var(--dd-green); font-weight: 700; font-size: 13px; }
+  .badge-r { color: #e11; font-weight: 700; font-size: 13px; }
+  .badge-gr { color: #999; font-weight: 700; font-size: 13px; }
+  .grid3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .tile {
+    background: #fff; border: 1px solid var(--line); border-radius: 14px;
+    padding: 14px 8px; text-align: center; font-size: 12px; font-weight: 600;
+  }
+  .tile .em { font-size: 22px; display: block; margin-bottom: 4px; }
+  .tile.on { border: 2px solid var(--dd-green); background: var(--dd-green-light); }
+  .progress { height: 3px; background: #eee; }
+  .progress > i { display: block; height: 100%; background: var(--dd-green); }
+  .progress.orange > i { background: var(--dd-orange); }
+  .pill {
+    display: inline-block; font-size: 10px; font-weight: 700; padding: 2px 8px;
+    border-radius: 999px; background: #e8f5ec; color: var(--dd-green);
+  }
+  .pill.wait { background: #eee; color: #666; }
+  .pill.rej { background: #fee; color: #c00; }
+  .detail-row {
+    display: flex; justify-content: space-between; gap: 12px;
+    padding: 10px 0; border-bottom: 1px solid #f3f3f3; font-size: 13px;
+  }
+  .detail-row span:first-child { color: #888; width: 100px; flex-shrink: 0; }
+  .detail-row span:last-child { text-align: right; flex: 1; }
+  .overlay {
+    position: absolute; inset: 0; background: rgba(0,0,0,.4); z-index: 20;
+    display: flex; align-items: center; justify-content: center; padding: 24px;
+  }
+  .sheet {
+    background: #fff; border-radius: 18px; padding: 20px; width: 100%;
+    max-height: 85%; overflow-y: auto; text-align: center;
+  }
+  .sheet .ico-circle {
+    width: 56px; height: 56px; border-radius: 50%; background: var(--dd-orange-light);
+    display: flex; align-items: center; justify-content: center; margin: 0 auto 10px; font-size: 24px;
+  }
+  .seg { display: grid; grid-template-columns: 1fr 1fr; background: #eee; border-radius: 12px; padding: 3px; margin: 10px 0; }
+  .seg button { height: 34px; border: 0; border-radius: 10px; background: transparent; font-size: 13px; font-weight: 700; color: #888; cursor: pointer; }
+  .seg button.on { background: #fff; color: #111; box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+  .ccard {
+    width: 148px; height: 88px; border-radius: 12px; padding: 10px;
+    background: linear-gradient(135deg,#3b82f6,#1d4ed8); color: #fff; text-align: left;
+    flex-shrink: 0; border: 2px solid transparent;
+  }
+  .ccard.on { border-color: var(--dd-orange); }
+  .hint { font-size: 11px; color: #999; line-height: 1.45; margin-top: 8px; }
+  .warn { font-size: 11px; color: #e11; margin-top: 6px; text-align: left; }
+  .toggle {
+    width: 46px; height: 28px; border-radius: 999px; background: var(--dd-green); position: relative;
+  }
+  .toggle::after {
+    content: ""; position: absolute; top: 2px; left: 20px; width: 24px; height: 24px;
+    background: #fff; border-radius: 50%; box-shadow: 0 1px 3px rgba(0,0,0,.2);
+  }
+</style>
+</head>
+<body>
+<div class="shell">
+  <aside class="nav">
+    <h1>DDPAY · 화면설계</h1>
+    <p class="sub">모바일 웹 430px 기준</p>
+    <div id="navList"></div>
+  </aside>
+
+  <main class="stage">
+    <div class="stage-title" id="stageTitle">화면을 선택하세요</div>
+    <div class="phone"><div class="phone-scroll" id="phone"></div></div>
+  </main>
+
+  <aside class="desc" id="desc">
+    <h2>디스크립션</h2>
+    <p class="muted">왼쪽에서 화면을 선택하면 상세 설명이 표시됩니다.</p>
+  </aside>
+</div>
+
+<script>
+const G = {
+  bnav(active) {
+    const tabs = [
+      ["home","🏠","홈"],["contract","✏️","계약등록"],["b2b","🔗","비즈링크"],
+      ["card","💳","카드등록"],["profile","👤","내정보"]
+    ];
+    return `<div class="bnav">${tabs.map(([id,ico,l]) =>
+      `<div class="${active===id?"on":""}"><span class="ico">${ico}</span>${l}</div>`
+    ).join("")}</div>`;
+  },
+  header(title, back=true) {
+    return `<div class="ph">${back?`<button class="back" type="button">‹</button>`:""}${title}</div>`;
+  }
+};
+
+const screens = [
+  {
+    id: "login", group: "인증", name: "01. 로그인", route: "/login",
+    desc: {
+      purpose: "가맹점 계정으로 APP 진입. 브랜드 신뢰를 첫 화면에 고정.",
+      layout: ["상단 DD·PAY 브랜드 바","중앙 로고(DD) + 디디페이 + 서브카피","아이디/비밀번호 필드(h-12, rounded-xl)","로그인 CTA(green full-width)","테스트 계정 힌트"],
+      rules: ["빈 값 제출 시 에러: 아이디와 비밀번호를 입력해주세요.","성공 시 /home 이동","회원가입/소셜 로그인 없음(B2B 전용)"]
+    },
+    html() {
+      return `
+        <div class="ph" style="border:0"><span style="color:var(--dd-green);font-size:13px;letter-spacing:.12em;font-weight:800">DD·PAY</span></div>
+        <div class="pad-nb" style="padding-top:36px;text-align:center">
+          <div style="width:64px;height:64px;border-radius:18px;background:var(--dd-green-light);margin:0 auto 14px;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:900;color:var(--dd-green)">DD</div>
+          <div style="font-size:22px;font-weight:800;margin-bottom:4px">디디페이</div>
+          <div class="muted" style="margin-bottom:28px">가맹점 결제 관리 서비스</div>
+          <div style="text-align:left">
+            <div class="label">아이디</div>
+            <input class="input" placeholder="아이디를 입력하세요" />
+            <div class="label">비밀번호</div>
+            <input class="input" type="password" placeholder="비밀번호를 입력하세요" />
+          </div>
+          <button class="btn btn-g" style="margin-top:8px">로그인</button>
+          <p class="hint" style="margin-top:18px;text-align:center">테스트 계정: 아무 아이디/비밀번호 입력</p>
+        </div>`;
+    }
+  },
+  {
+    id: "home", group: "홈", name: "02. 홈", route: "/home",
+    desc: {
+      purpose: "계약결제·비즈링크·식자재 진입 허브. 이번달 현황 요약.",
+      layout: ["유저명 + DDPAY","그린 프로모 배너(캐러셀 도트)","결제카드등록 바로가기","계약결제 3타일","이번달 등록 현황 3지표","비즈링크 섹션","식자재몰 섹션","BottomNav"],
+      rules: ["카드 수 뱃지로 등록 상태 노출","식자재 버튼은 현재 미연결"]
+    },
+    html() {
+      return `
+        <div style="padding:18px 16px 8px" class="row">
+          <strong style="font-size:14px">깐부치킨 울릉도점 님</strong>
+          <span style="font-size:11px;font-weight:900;letter-spacing:.1em;color:var(--dd-green)">DDPAY</span>
+        </div>
+        <div style="margin:0 14px 12px;background:var(--dd-green);border-radius:16px;padding:16px;color:#fff">
+          <div style="font-size:10px;opacity:.75;margin-bottom:6px">물류, 인건비, 경조사비까지</div>
+          <div style="font-size:16px;font-weight:900;line-height:1.35">복잡한 관리비용<br>이젠 후대폰 하나로<br>해결하세요!</div>
+          <div style="display:flex;justify-content:center;gap:5px;margin-top:12px">
+            <i style="width:6px;height:6px;border-radius:50%;background:#fff;display:inline-block"></i>
+            <i style="width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.35);display:inline-block"></i>
+            <i style="width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.35);display:inline-block"></i>
+          </div>
+        </div>
+        <div class="pad">
+          <div class="card row">
+            <div class="row" style="gap:10px"><span style="font-size:18px">💳</span><span style="font-size:14px;font-weight:600">결제카드등록</span></div>
+            <div class="row" style="gap:6px"><span style="width:20px;height:20px;border-radius:50%;background:var(--dd-green);color:#fff;font-size:11px;display:flex;align-items:center;justify-content:center;font-weight:800">1</span>›</div>
+          </div>
+          <div style="font-size:13px;font-weight:800;margin:6px 0 8px">계약결제 서비스</div>
+          <div class="grid3" style="margin-bottom:12px">
+            <div class="tile"><span class="em">📝</span>계약등록</div>
+            <div class="tile"><span class="em">📋</span>등록현황</div>
+            <div class="tile"><span class="em">💳</span>결제내역</div>
+          </div>
+          <div style="font-size:13px;font-weight:800;margin:6px 0 8px">이번달 등록 현황</div>
+          <div class="card">
+            <div class="grid3" style="text-align:center">
+              <div><div style="font-size:20px;font-weight:900;color:#bbb">01</div><div class="xs">승인대기</div></div>
+              <div><div style="font-size:20px;font-weight:900;color:#f66">01</div><div class="xs">반려</div></div>
+              <div><div style="font-size:20px;font-weight:900;color:var(--dd-green)">05</div><div class="xs">승인완료</div></div>
+            </div>
+          </div>
+          <div style="font-size:13px;font-weight:800;margin:10px 0 8px">비즈링크 카드결제 서비스</div>
+          <div class="card">
+            <div class="grid2" style="margin-bottom:8px">
+              <div style="background:#f3f3f3;border-radius:12px;padding:18px 8px;text-align:center;font-size:13px;font-weight:600">B2B구매대행<br>바로가기</div>
+              <div style="background:#f3f3f3;border-radius:12px;padding:18px 8px;text-align:center;font-size:13px;font-weight:600">구매내역</div>
+            </div>
+            <div class="row" style="padding:10px 0;border-top:1px solid #f3f3f3;font-size:13px">공급자등록 <span>›</span></div>
+            <div class="row" style="padding:10px 0;border-top:1px solid #f3f3f3;font-size:13px">공급자 승인내역 <span>›</span></div>
+          </div>
+        </div>
+        ${G.bnav("home")}`;
+    }
+  },
+  {
+    id: "contract1", group: "계약결제", name: "03. 계약등록 · Step1", route: "/contract (1/4)",
+    desc: {
+      purpose: "계약 유형·계약명 선택. 4스텝 시작.",
+      layout: ["Header + progress 25%","유형 3×2 그리드","계약명 입력","다음(유형+명 필수)"],
+      rules: ["선택 타일: green border + light bg","유형: 월세/경조사비/학원비/운영비/인건비/배달비"]
+    },
+    html() {
+      return `
+        ${G.header("신규계약 등록")}
+        <div class="progress"><i style="width:25%"></i></div>
+        <div class="pad-nb">
+          <p style="font-size:15px;font-weight:600;margin-bottom:14px">계약 유형을 선택해주세요.</p>
+          <div class="grid3" style="margin-bottom:16px">
+            <div class="tile on"><span class="em">🏠</span>월세</div>
+            <div class="tile"><span class="em">🎁</span>경조사비</div>
+            <div class="tile"><span class="em">📚</span>학원비</div>
+            <div class="tile"><span class="em">💼</span>운영비</div>
+            <div class="tile"><span class="em">👤</span>인건비</div>
+            <div class="tile"><span class="em">🛵</span>배달비</div>
+          </div>
+          <div class="label">계약명</div>
+          <input class="input" value="월세(홍길동월세)" />
+          <button class="btn btn-g" style="margin-top:8px">다음</button>
+        </div>`;
+    }
+  },
+  {
+    id: "contract2", group: "계약결제", name: "04. 계약등록 · Step2", route: "/contract (2/4)",
+    desc: {
+      purpose: "거래 상대방(개인/사업자) 정보 + 안심 계좌인증.",
+      layout: ["개인/사업자 라디오","성명·주민/사업자번호·은행·계좌","안심 계좌인증 CTA","고지 문구"],
+      rules: ["은행 미선택 red 보더","인증 후 green 체크","유효성만 검사, 상대 연락 없음"]
+    },
+    html() {
+      return `
+        ${G.header("신규계약 등록")}
+        <div class="progress"><i style="width:50%"></i></div>
+        <div class="pad-nb">
+          <p style="font-size:15px;font-weight:600;margin-bottom:12px">거래 상대방의 정보를 입력해주세요.</p>
+          <div class="row" style="justify-content:flex-start;gap:18px;margin-bottom:14px;font-size:13px;font-weight:600">
+            <span style="color:var(--dd-green)">● 🏠 개인</span>
+            <span style="color:#bbb">○ 🏢 사업자</span>
+          </div>
+          <div class="label">성명</div><input class="input" value="홍길동" />
+          <div class="label">주민번호</div><input class="input" value="800505-1******" />
+          <div class="label">은행선택</div>
+          <select class="input"><option>국민은행</option></select>
+          <div class="label">계좌번호</div><input class="input" value="11111111111" />
+          <button class="btn btn-od">안심 계좌인증</button>
+          <p class="hint">※ 계좌번호의 유효성 검사만 진행되며, 상대방에게 연락이 가지 않습니다.</p>
+          <div class="grid2" style="margin-top:16px"><button class="btn btn-ol">이전</button><button class="btn btn-g">다음</button></div>
+        </div>`;
+    }
+  },
+  {
+    id: "contract3", group: "계약결제", name: "05. 계약등록 · Step3", route: "/contract (3/4)",
+    desc: {
+      purpose: "송금액 입력, 결제금액(수수료 6.6%) 산출, 수동/자동 선택.",
+      layout: ["송금자명칭","송금금액","결제금액 읽기전용","수동/자동 2버튼"],
+      rules: ["결제금액 = 송금액 × 1.066","선택 CTA orange border"]
+    },
+    html() {
+      return `
+        ${G.header("신규계약 등록")}
+        <div class="progress"><i style="width:75%"></i></div>
+        <div class="pad-nb">
+          <p style="font-size:15px;font-weight:600;margin-bottom:12px">송금하실 금액을 입력해주세요.</p>
+          <div class="row"><div class="label" style="margin:0">송금자명칭</div><span style="font-size:11px;color:var(--dd-green)">송금자명 변경방법 ⓘ</span></div>
+          <input class="input" value="ㅋㅋㅋ" />
+          <div class="label">송금금액</div>
+          <div style="position:relative"><input class="input" value="100000" /><span style="position:absolute;right:12px;top:12px;color:#888">원</span></div>
+          <div class="label">결제금액</div>
+          <div class="input row" style="background:#f7f7f7"><strong>106,600</strong><span>원</span></div>
+          <p class="xs" style="text-align:right;margin-top:-6px;margin-bottom:12px">송금액+서비스이용료(6.6%)</p>
+          <div class="label">자동결제 여부(수동/자동)</div>
+          <div class="grid2">
+            <button class="btn btn-od" style="font-size:12px;height:48px;line-height:1.2">내가 직접결제하기<br>(수동)</button>
+            <button class="btn btn-ol" style="font-size:12px;height:48px;line-height:1.2">자동결제<br>신청하기</button>
+          </div>
+          <div class="grid2" style="margin-top:16px"><button class="btn btn-ol">이전</button><button class="btn btn-g">다음</button></div>
+        </div>`;
+    }
+  },
+  {
+    id: "contract4", group: "계약결제", name: "06. 계약등록 · Step4·완료", route: "/contract (4/4→완료)",
+    desc: {
+      purpose: "상대방 서류 첨부 후 등록 완료.",
+      layout: ["3종 서류 추가 버튼(green)","완료 화면: 완료 카피 + 등록현황 바로가기"],
+      rules: ["mock 등록 시 즉시 승인완료로 저장되어 바로 결제 가능 안내"]
+    },
+    html() {
+      return `
+        ${G.header("신규계약 등록")}
+        <div class="progress"><i style="width:100%"></i></div>
+        <div class="pad-nb">
+          <p style="font-size:15px;font-weight:600;margin-bottom:12px">받으시는 분(상대방)의 첨부 서류를 등록해주세요.</p>
+          ${["신분증 또는 사업자등록증","입금 통장 사본","임대차계약서 등"].map(t=>`
+            <div class="row" style="border:2px solid var(--dd-green);border-radius:12px;padding:12px 14px;margin-bottom:8px">
+              <span style="color:var(--dd-green);font-size:13px">${t} 추가</span>
+              <span style="width:24px;height:24px;border-radius:50%;background:var(--dd-green);color:#fff;display:flex;align-items:center;justify-content:center">+</span>
+            </div>`).join("")}
+          <div class="grid2" style="margin-top:16px"><button class="btn btn-ol">이전</button><button class="btn btn-g">계약등록 완료</button></div>
+          <div style="margin-top:28px;text-align:center;padding:20px;border:1px dashed #ddd;border-radius:16px">
+            <div style="font-size:36px;margin-bottom:8px">📝</div>
+            <div style="color:var(--dd-green);font-weight:800;font-size:16px">계약등록 완료!</div>
+            <p class="muted" style="margin:8px 0 14px">계약등록이 완료되어 바로 결제처리가 가능합니다.</p>
+            <button class="btn btn-g">계약 등록 현황 바로가기</button>
+          </div>
+        </div>`;
+    }
+  },
+  {
+    id: "status", group: "계약결제", name: "07. 계약 등록 현황", route: "/status",
+    desc: {
+      purpose: "계약 목록·필터·수동결제 진입점.",
+      layout: ["월/상태/결제예정일 필터","계약 카드: 날짜·상세·금액·뱃지·결제완료횟수·수동결제"],
+      rules: ["반려 시 결제 버튼 disabled + 사유 노출","상세 → /status/[id]"]
+    },
+    html() {
+      return `
+        ${G.header("계약 등록 현황")}
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;padding:10px 14px;border-bottom:1px solid var(--line)">
+          <select class="input" style="margin:0;height:34px;font-size:11px"><option>월선택</option></select>
+          <select class="input" style="margin:0;height:34px;font-size:11px"><option>상태</option></select>
+          <select class="input" style="margin:0;height:34px;font-size:11px"><option>결제예정일</option></select>
+        </div>
+        <div class="pad">
+          <div class="card">
+            <div class="row xs"><span>2025-12-10</span><span>상세 ›</span></div>
+            <div class="row" style="margin-top:4px"><strong style="font-size:15px">배달비(ㄱㄱ)</strong><strong>53,300원</strong></div>
+            <div class="row" style="margin-top:10px">
+              <div><span class="badge-g">승인완료</span> <span class="xs">결제완료:0회</span></div>
+              <button class="btn btn-o" style="width:auto;height:30px;padding:0 10px;font-size:11px">수동 결제하기</button>
+            </div>
+          </div>
+          <div class="card">
+            <div class="row xs"><span>2026-02-14</span><span>상세 ›</span></div>
+            <div class="row" style="margin-top:4px"><strong style="font-size:15px">학원비(김하나)</strong><strong>21,320원</strong></div>
+            <div class="row" style="margin-top:10px">
+              <span class="badge-r">반려</span>
+              <button class="btn disabled" style="width:auto;height:30px;padding:0 10px;font-size:11px">수동 결제하기</button>
+            </div>
+            <p class="warn">첨부서류(입금통장사본)가 누락되어 반려되었습니다.</p>
+          </div>
+        </div>`;
+    }
+  },
+  {
+    id: "pay-card", group: "수동결제", name: "08. 수동결제 · 카드선택", route: "Modal step: card",
+    desc: {
+      purpose: "결제에 사용할 카드 선택.",
+      layout: ["오버레이 시트","계약명+상태","가로 스크롤 카드","취소|다음"],
+      rules: ["선택 카드 orange ring","카드 없으면 다음 disabled"]
+    },
+    html() {
+      return `
+        ${G.header("계약 등록 현황")}
+        <div class="overlay">
+          <div class="sheet">
+            <div class="ico-circle">💳</div>
+            <div style="font-weight:800">배달비(ㄱㄱ)</div>
+            <div class="badge-g" style="margin:6px 0 12px">승인완료</div>
+            <div style="display:flex;gap:10px;overflow-x:auto;padding:4px 0 8px">
+              <div class="ccard on"><div class="xs" style="color:rgba(255,255,255,.8)">CREDIT CARD</div><div style="font-weight:800;margin-top:28px">신한카드</div></div>
+            </div>
+            <p class="muted" style="margin-bottom:12px">신한카드 (0153)</p>
+            <div class="grid2"><button class="btn btn-ol">취소</button><button class="btn btn-o">다음</button></div>
+          </div>
+        </div>`;
+    }
+  },
+  {
+    id: "pay-normal", group: "수동결제", name: "09. 일반결제 확인", route: "Modal · 일반결제",
+    desc: {
+      purpose: "일시불(일반) 결제 최종 확인. 결제금액을 수정한 뒤 바로 결제.",
+      layout: [
+        "시트 헤더: 카드 아이콘 + 계약명 + 승인완료 뱃지",
+        "결제정보 테이블 7행 (받는사람~결제구분=일시불)",
+        "결제일(오늘)",
+        "세그먼트: 일반결제(활성) | 분할결제",
+        "결제금액 큰 숫자 + ✎ 편집",
+        "고지 문구",
+        "CTA: 카드선택 | 결제하기(항상 활성, 금액>0 가정)"
+      ],
+      rules: [
+        "일반결제 = 일시불 1회 승인",
+        "✎ 클릭 시 number input으로 전환, blur 시 확정",
+        "금액 변경해도 분할칸은 없음",
+        "분할결제 탭 누르면 분할 플로우로 전환"
+      ]
+    },
+    html() {
+      return `
+        ${G.header("계약 등록 현황")}
+        <div class="overlay">
+          <div class="sheet" style="text-align:left">
+            <div class="ico-circle" style="margin:0 auto 10px">💳</div>
+            <div style="text-align:center;font-weight:800">배달비(ㄱㄱ)</div>
+            <div style="text-align:center" class="badge-g">승인완료</div>
+            <div style="background:#f7f7f7;border-radius:12px;overflow:hidden;font-size:12px;margin:12px 0 8px">
+              ${[["받는사람","ㄱㄱ"],["받는계좌","신한/110369844940"],["통장표기","테스트"],["송금액","50,000원"],["결제금액","53,300원"],["결제카드","신한(0153)"],["결제구분","일시불"]].map(([a,b])=>
+                `<div class="row" style="padding:8px 10px;border-bottom:1px solid #eee"><span class="muted">${a}</span><strong>${b}</strong></div>`
+              ).join("")}
+            </div>
+            <p class="xs">결제일: 2026-08-27</p>
+            <div class="seg"><button class="on">일반결제</button><button>분할결제</button></div>
+            <div style="background:#f7f7f7;border-radius:12px;height:52px;display:flex;align-items:center;justify-content:center;position:relative;margin-bottom:10px">
+              <strong style="font-size:20px">53,300원</strong>
+              <span style="position:absolute;right:14px;color:var(--dd-orange)">✎</span>
+            </div>
+            <p class="xs" style="text-align:center;margin:8px 0 12px">※ 위 내용을 확인 후 · 결제하기를 클릭하세요.</p>
+            <div class="grid2"><button class="btn btn-ol">카드선택</button><button class="btn btn-o">결제하기</button></div>
+          </div>
+        </div>`;
+    }
+  },
+  {
+    id: "pay-split-guide", group: "수동결제", name: "10-1. 분할결제 · 규칙안내", route: "Modal · 분할 진입",
+    desc: {
+      purpose: "분할결제 탭 진입 직후, 금액 구간→입력칸 수 규칙을 안내.",
+      layout: [
+        "공통 헤더·결제정보(결제구분=분할결제 N회)",
+        "세그먼트: 분할결제 활성",
+        "결제금액 + ✎",
+        "규칙 안내 카드(구간표)",
+        "하단: 아직 회차 미입력 상태 안내"
+      ],
+      rules: [
+        "결제금액 변경 시 칸 수가 재계산되며 기존 입력 초기화",
+        "≤1천만=3 / ≤3천만=5 / ≤5천만=7 / ≤7천만=9 / ≤9천만=11 / 초과=11(임시)",
+        "마지막 칸은 항상 자동계산(직접 입력 불가)"
+      ]
+    },
+    html() {
+      return `
+        ${G.header("계약 등록 현황")}
+        <div class="overlay">
+          <div class="sheet" style="text-align:left">
+            <div class="ico-circle" style="margin:0 auto 8px">💳</div>
+            <div style="text-align:center;font-weight:800;margin-bottom:4px">월세(홍길동월세)</div>
+            <div style="text-align:center" class="badge-g">승인완료</div>
+            <div class="seg" style="margin-top:10px"><button>일반결제</button><button class="on">분할결제</button></div>
+            <div style="background:#f7f7f7;border-radius:12px;height:48px;display:flex;align-items:center;justify-content:center;position:relative;margin-bottom:10px">
+              <strong style="font-size:18px">8,500,000원</strong>
+              <span style="position:absolute;right:12px;color:var(--dd-orange)">✎</span>
+            </div>
+            <div style="background:#fff8ef;border:1px solid #f5d9b0;border-radius:12px;padding:12px;margin-bottom:10px">
+              <div style="font-size:12px;font-weight:800;color:var(--dd-orange);margin-bottom:8px">분할결제 규칙</div>
+              <table style="width:100%;font-size:11px;border-collapse:collapse">
+                <tr style="background:#fff;"><td style="padding:5px;border-bottom:1px solid #f0e0c8">1천만원 이하</td><td style="padding:5px;text-align:right;font-weight:700">3칸</td></tr>
+                <tr><td style="padding:5px;border-bottom:1px solid #f0e0c8">3천만원 이하</td><td style="padding:5px;text-align:right;font-weight:700">5칸</td></tr>
+                <tr style="background:#fff;"><td style="padding:5px;border-bottom:1px solid #f0e0c8">5천만원 이하</td><td style="padding:5px;text-align:right;font-weight:700">7칸</td></tr>
+                <tr><td style="padding:5px;border-bottom:1px solid #f0e0c8">7천만원 이하</td><td style="padding:5px;text-align:right;font-weight:700">9칸</td></tr>
+                <tr style="background:#fff;"><td style="padding:5px;border-bottom:1px solid #f0e0c8">9천만원 이하</td><td style="padding:5px;text-align:right;font-weight:700">11칸</td></tr>
+                <tr><td style="padding:5px">9천만원 초과</td><td style="padding:5px;text-align:right;font-weight:700;color:#c00">11칸(임시)</td></tr>
+              </table>
+              <p class="hint" style="margin-top:8px">• 현재 금액 850만원 → <strong>3칸</strong> 생성<br>• 1~(N-1)회차 직접입력 / 마지막 회차 자동계산<br>• 모든 회차 금액은 서로 달라야 함</p>
+            </div>
+            <div style="background:#f7f7f7;border-radius:10px;padding:10px;margin-bottom:8px">
+              <div class="row" style="font-size:12px;padding:6px 0"><span class="muted">1회차</span><span style="color:#bbb">금액 입력</span></div>
+              <div class="row" style="font-size:12px;padding:6px 0"><span class="muted">2회차</span><span style="color:#bbb">금액 입력</span></div>
+              <div class="row" style="font-size:12px;padding:6px 0"><span class="muted">3회차 <span class="pill wait">자동</span></span><strong>8,500,000원</strong></div>
+            </div>
+            <p class="xs" style="color:#888">모든 회차에 금액을 입력해야 결제하기 버튼이 활성화됩니다.</p>
+            <div class="grid2" style="margin-top:10px"><button class="btn btn-ol">카드선택</button><button class="btn disabled">결제하기</button></div>
+          </div>
+        </div>`;
+    }
+  },
+  {
+    id: "pay-split-empty", group: "수동결제", name: "10-2. 분할결제 · 빈입력(비활성)", route: "Modal · 분할 미입력",
+    desc: {
+      purpose: "칸은 생성됐지만 1~(N-1) 미입력 → 결제하기 disabled.",
+      layout: ["결제구분=분할결제(3회)","3칸 UI","마지막 칸=총액(아직 다른 칸 0)","안내 문구 gray","결제하기 disabled"],
+      rules: [
+        "빈 칸은 0으로 취급하되, 중복 판정은 '실제 입력된 값 + 마지막 칸'만 대상",
+        "splitAllFilled=false → 버튼 비활성",
+        "안내: 모든 회차에 금액을 입력해야…"
+      ]
+    },
+    html() {
+      return `
+        ${G.header("계약 등록 현황")}
+        <div class="overlay">
+          <div class="sheet" style="text-align:left">
+            <div style="text-align:center;font-weight:800;margin-bottom:2px">월세(홍길동월세)</div>
+            <div style="text-align:center;font-size:11px;color:#888;margin-bottom:8px">결제구분: 분할결제(3회) · 총 8,500,000원</div>
+            <div class="seg"><button>일반결제</button><button class="on">분할결제</button></div>
+            ${[["1회차","",false],["2회차","",false],["3회차(자동)","8,500,000원",true]].map(([l,v,auto])=>`
+              <div class="row" style="background:#f7f7f7;border-radius:10px;padding:10px 12px;margin-bottom:6px;font-size:13px">
+                <span class="muted">${l}</span>
+                ${auto?`<strong>${v}</strong>`:`<input class="input" style="margin:0;height:32px;width:140px;text-align:right;background:#fff" placeholder="금액 입력" />`}
+              </div>`).join("")}
+            <p class="xs" style="margin:8px 0">모든 회차에 금액을 입력해야 결제하기 버튼이 활성화됩니다.</p>
+            <div class="grid2"><button class="btn btn-ol">카드선택</button><button class="btn disabled">결제하기</button></div>
+          </div>
+        </div>`;
+    }
+  },
+  {
+    id: "pay-split-typing", group: "수동결제", name: "10-3. 분할결제 · 입력중(자동잔액)", route: "Modal · 분할 입력중",
+    desc: {
+      purpose: "사용자가 앞 회차를 입력하면 마지막 칸이 실시간 잔액으로 갱신.",
+      layout: ["1회차 입력값","2회차 입력값","3회차=총액−합 (자동, 강조)","잔액 합계 바","결제하기 아직 disabled(2회차 비었거나 조건 미충족 시)"],
+      rules: [
+        "lastAmount = amount - sum(1..N-1)",
+        "입력 중에도 마지막 칸은 읽기전용",
+        "금액 편집(✎)하면 칸 수 재생성 + 입력 초기화"
+      ]
+    },
+    html() {
+      return `
+        ${G.header("계약 등록 현황")}
+        <div class="overlay">
+          <div class="sheet" style="text-align:left">
+            <div style="text-align:center;font-weight:800">월세(홍길동월세)</div>
+            <div style="text-align:center;font-size:11px;color:#888;margin:4px 0 8px">분할결제 3회 · 총액 8,500,000원</div>
+            <div class="seg"><button>일반결제</button><button class="on">분할결제</button></div>
+            <div class="row" style="background:#f7f7f7;border-radius:10px;padding:10px 12px;margin-bottom:6px;font-size:13px">
+              <span class="muted">1회차</span><strong>3,200,000원</strong>
+            </div>
+            <div class="row" style="background:#fff;border:1.5px solid var(--dd-orange);border-radius:10px;padding:10px 12px;margin-bottom:6px;font-size:13px">
+              <span class="muted">2회차</span><input class="input" style="margin:0;height:32px;width:140px;text-align:right;border-color:var(--dd-orange)" value="2,100,000" />
+            </div>
+            <div class="row" style="background:var(--dd-green-light);border-radius:10px;padding:10px 12px;margin-bottom:6px;font-size:13px">
+              <span>3회차 <span class="pill">자동</span></span><strong style="color:var(--dd-green)">3,200,000원</strong>
+            </div>
+            <div style="background:#f3f3f3;border-radius:8px;padding:8px 10px;font-size:11px;margin:8px 0">
+              <div class="row"><span>입력 합 (1~2)</span><span>5,300,000</span></div>
+              <div class="row" style="margin-top:4px"><span>자동 잔액 (3)</span><strong>3,200,000</strong></div>
+              <div class="row" style="margin-top:4px;color:#c00"><span>⚠ 중복</span><span>1회차=3회차 동일</span></div>
+            </div>
+            <p class="warn">⚠ 각 회차 금액은 서로 달라야 합니다. (동일 금액 불가)</p>
+            <div class="grid2" style="margin-top:10px"><button class="btn btn-ol">카드선택</button><button class="btn disabled">결제하기</button></div>
+          </div>
+        </div>`;
+    }
+  },
+  {
+    id: "pay-split-dup", group: "수동결제", name: "10-4. 분할결제 · 동일금액 오류", route: "Modal · 분할 에러(중복)",
+    desc: {
+      purpose: "회차 금액이 서로 같을 때 경고 + 결제 차단.",
+      layout: ["채워진 회차들","빨간 경고 문구","결제하기 disabled"],
+      rules: [
+        "100원 단위 차이도 '다른 금액'으로 인정(완전 동일만 거부)",
+        "filledSplitValues = 입력된 칸들 + lastAmount",
+        "Set size !== length → duplicate"
+      ]
+    },
+    html() {
+      return `
+        ${G.header("계약 등록 현황")}
+        <div class="overlay">
+          <div class="sheet" style="text-align:left">
+            <div style="text-align:center;font-weight:800;margin-bottom:8px">분할결제 · 동일금액 오류</div>
+            <div class="seg"><button>일반결제</button><button class="on">분할결제</button></div>
+            <div style="font-size:11px;color:#888;margin-bottom:8px">총액 8,500,000원 · 3칸</div>
+            ${[["1회차","2,833,333원"],["2회차","2,833,333원"],["3회차(자동)","2,833,334원"]].map(([l,v],i)=>`
+              <div class="row" style="background:${i===1?"#fff1f1":"#f7f7f7"};border:${i===1?"1.5px solid #e11":"none"};border-radius:10px;padding:10px 12px;margin-bottom:6px;font-size:13px">
+                <span class="muted">${l}</span><strong style="${i===1?"color:#e11":""}">${v}</strong>
+              </div>`).join("")}
+            <div style="background:#fff1f1;border-radius:10px;padding:10px;margin:8px 0">
+              <p class="warn" style="margin:0">⚠ 각 회차 금액은 서로 달라야 합니다. (동일 금액 불가)</p>
+              <p class="xs" style="margin-top:6px">1회차와 2회차가 동일합니다. 한 회차라도 금액을 변경해 주세요.</p>
+            </div>
+            <div class="grid2"><button class="btn btn-ol">카드선택</button><button class="btn disabled">결제하기</button></div>
+          </div>
+        </div>`;
+    }
+  },
+  {
+    id: "pay-split-over", group: "수동결제", name: "10-5. 분할결제 · 합계초과 오류", route: "Modal · 분할 에러(초과)",
+    desc: {
+      purpose: "앞 회차 합이 총액을 넘기면 마지막 칸이 음수/0 → 차단.",
+      layout: ["마지막 칸 red 금액","초과 경고 / 잔액0 경고 분기","결제하기 disabled"],
+      rules: [
+        "lastAmount < 0 → '입력한 금액의 합이 결제금액을 초과했습니다.'",
+        "lastAmount === 0 → '마지막 회차에 남는 금액이 없습니다…'",
+        "둘 다 splitValid=false"
+      ]
+    },
+    html() {
+      return `
+        ${G.header("계약 등록 현황")}
+        <div class="overlay">
+          <div class="sheet" style="text-align:left">
+            <div style="text-align:center;font-weight:800;margin-bottom:8px">분할결제 · 합계 초과</div>
+            <div class="seg"><button>일반결제</button><button class="on">분할결제</button></div>
+            <div style="font-size:11px;color:#888;margin-bottom:8px">총액 8,500,000원</div>
+            <div class="row" style="background:#f7f7f7;border-radius:10px;padding:10px 12px;margin-bottom:6px;font-size:13px">
+              <span class="muted">1회차</span><strong>5,000,000원</strong>
+            </div>
+            <div class="row" style="background:#f7f7f7;border-radius:10px;padding:10px 12px;margin-bottom:6px;font-size:13px">
+              <span class="muted">2회차</span><strong>4,000,000원</strong>
+            </div>
+            <div class="row" style="background:#fff1f1;border-radius:10px;padding:10px 12px;margin-bottom:6px;font-size:13px">
+              <span class="muted">3회차(자동)</span><strong style="color:#e11">-500,000원</strong>
+            </div>
+            <p class="warn">입력한 금액의 합이 결제금액을 초과했습니다.</p>
+            <div class="grid2" style="margin-top:10px"><button class="btn btn-ol">카드선택</button><button class="btn disabled">결제하기</button></div>
+          </div>
+        </div>`;
+    }
+  },
+  {
+    id: "pay-split-zero", group: "수동결제", name: "10-6. 분할결제 · 잔액0 오류", route: "Modal · 분할 에러(잔액0)",
+    desc: {
+      purpose: "앞 회차 합이 총액과 같아 마지막 칸이 0원이 되는 경우 결제 차단.",
+      layout: ["자동칸 0원 표시","잔액0 전용 경고 문구","결제하기 disabled"],
+      rules: [
+        "lastAmount === 0 → 전용 경고",
+        "'마지막 회차에 남는 금액이 없습니다. 다른 회차 금액을 줄여주세요.'",
+        "합계초과(음수)와 별도 상태로 취급"
+      ]
+    },
+    html() {
+      return `
+        ${G.header("계약 등록 현황")}
+        <div class="overlay">
+          <div class="sheet" style="text-align:left">
+            <div style="text-align:center;font-weight:800;margin-bottom:8px">분할결제 · 잔액 0원</div>
+            <div class="seg"><button>일반결제</button><button class="on">분할결제</button></div>
+            <div style="font-size:11px;color:#888;margin-bottom:8px">총액 8,500,000원</div>
+            <div class="row" style="background:#f7f7f7;border-radius:10px;padding:10px 12px;margin-bottom:6px;font-size:13px">
+              <span class="muted">1회차</span><strong>5,000,000원</strong>
+            </div>
+            <div class="row" style="background:#f7f7f7;border-radius:10px;padding:10px 12px;margin-bottom:6px;font-size:13px">
+              <span class="muted">2회차</span><strong>3,500,000원</strong>
+            </div>
+            <div class="row" style="background:#fff1f1;border-radius:10px;padding:10px 12px;margin-bottom:6px;font-size:13px">
+              <span class="muted">3회차(자동)</span><strong style="color:#e11">0원</strong>
+            </div>
+            <div style="background:#fff1f1;border-radius:10px;padding:10px;margin:8px 0">
+              <p class="warn" style="margin:0">마지막 회차에 남는 금액이 없습니다. 다른 회차 금액을 줄여주세요.</p>
+              <p class="xs" style="margin-top:6px">1~2회차 합(8,500,000) = 총액 → 자동 잔액 0. 결제 불가.</p>
+            </div>
+            <div class="grid2"><button class="btn btn-ol">카드선택</button><button class="btn disabled">결제하기</button></div>
+          </div>
+        </div>`;
+    }
+  },
+  {
+    id: "pay-split-valid", group: "수동결제", name: "10-7. 분할결제 · 유효(결제가능)", route: "Modal · 분할 유효",
+    desc: {
+      purpose: "모든 조건 충족 → 결제하기 활성. 최종 확인 화면.",
+      layout: [
+        "정보 테이블 결제구분=분할결제(3회)",
+        "회차별 금액 목록(서로 다름, 합=총액)",
+        "합계 체크 OK 배지",
+        "결제하기 orange 활성"
+      ],
+      rules: [
+        "조건: 전 칸>0 AND 서로 다름 AND lastAmount>0 AND 합=총액",
+        "결제하기 → done 스텝",
+        "목록 completedCount +1 (mock)"
+      ]
+    },
+    html() {
+      return `
+        ${G.header("계약 등록 현황")}
+        <div class="overlay">
+          <div class="sheet" style="text-align:left">
+            <div class="ico-circle" style="margin:0 auto 8px">💳</div>
+            <div style="text-align:center;font-weight:800">월세(홍길동월세)</div>
+            <div style="text-align:center" class="badge-g">승인완료</div>
+            <div style="background:#f7f7f7;border-radius:12px;overflow:hidden;font-size:12px;margin:10px 0">
+              ${[["받는사람","홍길동"],["받는계좌","국민/11111111111"],["송금액","7,973,734원"],["결제금액","8,500,000원"],["결제카드","신한(0153)"],["결제구분","분할결제(3회)"]].map(([a,b])=>
+                `<div class="row" style="padding:7px 10px;border-bottom:1px solid #eee"><span class="muted">${a}</span><strong>${b}</strong></div>`
+              ).join("")}
+            </div>
+            <div class="seg"><button>일반결제</button><button class="on">분할결제</button></div>
+            ${[["1회차","3,100,000원"],["2회차","2,450,000원"],["3회차(자동)","2,950,000원"]].map(([l,v])=>`
+              <div class="row" style="background:#f7f7f7;border-radius:10px;padding:10px 12px;margin-bottom:6px;font-size:13px">
+                <span class="muted">${l}</span><strong>${v}</strong>
+              </div>`).join("")}
+            <div style="background:var(--dd-green-light);border-radius:10px;padding:10px;margin:8px 0;font-size:12px">
+              <div class="row"><span>✓ 합계</span><strong style="color:var(--dd-green)">8,500,000원 = 총액</strong></div>
+              <div class="row" style="margin-top:4px"><span>✓ 중복</span><strong style="color:var(--dd-green)">없음 (모두 상이)</strong></div>
+            </div>
+            <p class="xs" style="text-align:center;margin:8px 0">※ 위 내용을 확인 후 · 결제하기를 클릭하세요.</p>
+            <div class="grid2"><button class="btn btn-ol">카드선택</button><button class="btn btn-o">결제하기</button></div>
+          </div>
+        </div>`;
+    }
+  },
+  {
+    id: "pay-split-tier5", group: "수동결제", name: "10-8. 분할결제 · 5칸(3천만이하)", route: "Modal · 분할 5칸 예시",
+    desc: {
+      purpose: "금액 구간이 올라가면 칸 수가 늘어나는 UI 예시 (≤3천만 → 5칸).",
+      layout: ["총액 25,000,000원","5회차 입력 UI","4칸 수동 + 5칸 자동","스크롤 가능한 시트"],
+      rules: [
+        "금액 ✎로 구간 경계 넘기면 칸 수 변경 + 입력 리셋",
+        "예: 1000만→1000만+1원 시 3칸→5칸"
+      ]
+    },
+    html() {
+      return `
+        ${G.header("계약 등록 현황")}
+        <div class="overlay">
+          <div class="sheet" style="text-align:left">
+            <div style="text-align:center;font-weight:800">물류대금(대형거래)</div>
+            <div style="text-align:center;font-size:11px;color:#888;margin:4px 0">총액 25,000,000원 → <strong>5칸</strong> (3천만원 이하)</div>
+            <div class="seg"><button>일반결제</button><button class="on">분할결제</button></div>
+            <div style="background:#f7f7f7;border-radius:12px;height:44px;display:flex;align-items:center;justify-content:center;position:relative;margin-bottom:8px">
+              <strong>25,000,000원</strong><span style="position:absolute;right:12px;color:var(--dd-orange)">✎</span>
+            </div>
+            ${[
+              ["1회차","5,100,000"],["2회차","4,800,000"],["3회차","5,050,000"],["4회차","4,900,000"],["5회차(자동)","5,150,000"]
+            ].map(([l,v],i,arr)=>`
+              <div class="row" style="background:${i===arr.length-1?"var(--dd-green-light)":"#f7f7f7"};border-radius:10px;padding:9px 12px;margin-bottom:5px;font-size:12px">
+                <span class="muted">${l}</span><strong>${Number(v).toLocaleString()}원</strong>
+              </div>`).join("")}
+            <div style="background:var(--dd-green-light);border-radius:8px;padding:8px;font-size:11px;margin:6px 0">
+              ✓ 5회 합계 25,000,000원 · 모두 상이 · 결제 가능
+            </div>
+            <div class="grid2"><button class="btn btn-ol">카드선택</button><button class="btn btn-o">결제하기</button></div>
+          </div>
+        </div>`;
+    }
+  },
+  {
+    id: "pay-split-flow", group: "수동결제", name: "10-9. 분할결제 · 전체 플로우", route: "플로우 다이어그램",
+    desc: {
+      purpose: "분할결제 end-to-end 의사결정 플로우 요약 화면.",
+      layout: ["단계 카드 세로 스택","분기(유효/오류)","완료 연결"],
+      rules: ["스펙·개발 공통 레퍼런스","9천만 초과 칸수 기획 확정 필요"]
+    },
+    html() {
+      return `
+        ${G.header("분할결제 플로우")}
+        <div class="pad-nb" style="font-size:12px">
+          ${[
+            ["1","카드선택","등록 카드 스와이프 → 다음"],
+            ["2","탭 선택","일반결제 / 분할결제"],
+            ["3","금액 확정","✎로 결제금액 수정 → 구간별 칸수 산정"],
+            ["4","회차 입력","1~(N-1) 수동 / N 자동잔액"],
+            ["5a","검증 OK","전칸>0 · 상이 · 합=총액 → 결제하기"],
+            ["5b","검증 NG","중복 / 초과 / 잔액0 / 미입력 → disabled"],
+            ["6","완료","요청 완료 모달 → 목록 카운트 +1"]
+          ].map(([n,t,d])=>`
+            <div class="card" style="padding:12px">
+              <div class="row" style="margin-bottom:4px">
+                <span class="pill" style="background:${n==="5b"?"#fee":n==="5a"?"var(--dd-green-light)":"#eee"};color:${n==="5b"?"#c00":n==="5a"?"var(--dd-green)":"#555"}">STEP ${n}</span>
+                <strong style="font-size:13px">${t}</strong>
+              </div>
+              <div class="muted">${d}</div>
+            </div>`).join("")}
+          <div class="card" style="background:#fff8ef;border-color:#f5d9b0">
+            <div style="font-weight:800;font-size:12px;color:var(--dd-orange);margin-bottom:6px">칸수 산정 함수</div>
+            <pre style="font-size:10px;line-height:1.45;white-space:pre-wrap;color:#444">getSplitCount(amount):
+  ≤10,000,000 → 3
+  ≤30,000,000 → 5
+  ≤50,000,000 → 7
+  ≤70,000,000 → 9
+  ≤90,000,000 → 11
+  else        → 11 (임시)</pre>
+          </div>
+        </div>`;
+    }
+  },
+  {
+    id: "pay-done", group: "수동결제", name: "11. 수동결제 · 완료", route: "Modal step: done",
+    desc: {
+      purpose: "결제 요청 완료 안내.",
+      layout: ["요청 완료 문구","확인 → 목록 결제완료 카운트 +1"],
+      rules: ["실제 PG 연동 없음(mock)"]
+    },
+    html() {
+      return `
+        ${G.header("계약 등록 현황")}
+        <div class="overlay">
+          <div class="sheet">
+            <div class="ico-circle">💳</div>
+            <div style="font-weight:800;margin-bottom:8px">배달비(ㄱㄱ)</div>
+            <p class="muted" style="margin:12px 0 18px;line-height:1.5">결제가 요청되었습니다.<br>결제 결과는 결제내역에서 확인하세요.</p>
+            <button class="btn btn-o">확인</button>
+          </div>
+        </div>`;
+    }
+  },
+  {
+    id: "status-detail", group: "계약결제", name: "12. 등록현황 상세", route: "/status/[id]",
+    desc: {
+      purpose: "계약·서류·계좌·완료내역 상세 조회.",
+      layout: ["기본정보(+사용중지)","첨부서류","계좌송금 등록내역(+송금자 수정)","카드/송금 완료 요약"],
+      rules: ["배달비 시 플랫폼사·사업자 추가 필드"]
+    },
+    html() {
+      return `
+        ${G.header("등록현황 상세")}
+        <div class="pad-nb">
+          <div class="card">
+            ${[["서비스분류","배달비"],["계약등록번호","46012"],["계약명","배달비(ㄱㄱ) · 사용중지하기"],["계약등록일","2025-12-10"],["결제방식","수동"],["승인상태","승인완료"]].map(([a,b])=>
+              `<div class="detail-row"><span>${a}</span><span>${b}</span></div>`
+            ).join("")}
+          </div>
+          <div class="card">
+            <div style="font-weight:700;font-size:13px;margin-bottom:8px">첨부서류</div>
+            <div style="color:#2563eb;font-size:13px;text-decoration:underline;margin-bottom:4px">📄 신분증/사업자등록증.png</div>
+            <div style="color:#2563eb;font-size:13px;text-decoration:underline">📄 입금통장사본.png</div>
+          </div>
+          <div class="card">
+            <div style="font-weight:700;font-size:13px;margin-bottom:8px">계좌송금 등록내역</div>
+            ${[["은행","신한은행"],["계좌번호","110369844940"],["예금주명","테스트"],["송금자명칭","ㅋㅋㅋa ✎수정"]].map(([a,b])=>
+              `<div class="detail-row"><span>${a}</span><span>${b}</span></div>`
+            ).join("")}
+          </div>
+        </div>`;
+    }
+  },
+  {
+    id: "payments", group: "계약결제", name: "13. 구매내역", route: "/payments",
+    desc: {
+      purpose: "결제/송금 내역 목록·기간·탭 필터.",
+      layout: ["4탭","기간+당일/일주일","결제완료/송금완료 요약","리스트 카드"],
+      rules: ["실패 금액 취소선","B2B·식자재 탭 현재 빈 목록"]
+    },
+    html() {
+      return `
+        ${G.header("구매내역")}
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid #ddd;background:#fff">
+          ${["전체","계약결제","B2B","식자재"].map((t,i)=>
+            `<div style="padding:12px 0;text-align:center;font-size:11px;font-weight:700;${i===0?"color:var(--dd-green);border-bottom:2px solid var(--dd-green)":"color:#bbb"}">${t}</div>`
+          ).join("")}
+        </div>
+        <div style="padding:10px 14px;display:flex;gap:6px;align-items:center;border-bottom:1px solid var(--line);font-size:11px">
+          <input class="input" type="date" style="margin:0;height:32px;flex:1" value="2026-07-27" />
+          <span>~</span>
+          <input class="input" type="date" style="margin:0;height:32px;flex:1" value="2026-08-27" />
+          <button class="btn btn-ol" style="width:auto;height:32px;padding:0 8px;font-size:11px">당일</button>
+        </div>
+        <div class="pad">
+          <div class="grid2" style="margin-bottom:10px">
+            <div class="card" style="margin:0"><div class="row xs"><span>결제완료</span><strong style="color:var(--dd-orange)">0건</strong></div><div class="row" style="margin-top:6px"><span class="xs">총 결제금액</span><strong style="font-size:13px">0원</strong></div></div>
+            <div class="card" style="margin:0"><div class="row xs"><span>송금완료</span><strong style="color:var(--dd-green)">0건</strong></div><div class="row" style="margin-top:6px"><span class="xs">총 송금금액</span><strong style="font-size:13px">0원</strong></div></div>
+          </div>
+          <div class="card">
+            <div class="row xs"><span>2026-01-02</span><span>상세 ›</span></div>
+            <div class="row" style="margin-top:4px"><strong>운영/용역비(김승욱)</strong><strong style="text-decoration:line-through;color:#aaa">5,165원</strong></div>
+            <div class="row" style="margin-top:8px"><span class="xs">결제정보 <span class="badge-r">결제실패</span></span><span class="xs">수동</span></div>
+          </div>
+        </div>`;
+    }
+  },
+  {
+    id: "payment-detail", group: "계약결제", name: "14. 결제내역 상세", route: "/payments/[id]",
+    desc: {
+      purpose: "단일 결제의 계약·카드·송금 상세.",
+      layout: ["계약 기본","카드결제 상세(실패사유 포함)","계좌송금 상세"],
+      rules: ["실패사유 red 강조"]
+    },
+    html() {
+      return `
+        ${G.header("결제내역 상세")}
+        <div class="pad-nb">
+          <div class="card">
+            ${[["서비스분류","운영/용역비"],["계약결제번호","26010200000005"],["계약명","운영/용역비"],["승인상태","승인완료"]].map(([a,b])=>`<div class="detail-row"><span>${a}</span><span>${b}</span></div>`).join("")}
+          </div>
+          <div class="card">
+            <div style="font-weight:700;font-size:13px;margin-bottom:6px">카드결제 상세</div>
+            ${[["카드 결제 금액","5,165원"],["결제상태","결제실패"],["결제실패사유","가맹점에 빌키아이디가 존재하지않습니다."],["결제카드","신한카드(94001)"]].map(([a,b])=>`<div class="detail-row"><span>${a}</span><span style="${a.includes("실패")?"color:#e11;font-size:11px":""}">${b}</span></div>`).join("")}
+          </div>
+          <div class="card">
+            <div style="font-weight:700;font-size:13px;margin-bottom:6px">계좌송금 상세</div>
+            ${[["은행","신한은행"],["송금액","5,000원"],["송금상태","송금대기"]].map(([a,b])=>`<div class="detail-row"><span>${a}</span><span>${b}</span></div>`).join("")}
+          </div>
+        </div>`;
+    }
+  },
+  {
+    id: "b2b", group: "비즈링크", name: "15. B2B 홈", route: "/b2b",
+    desc: {
+      purpose: "비즈링크 카드결제 서비스 메뉴.",
+      layout: ["BIZLINK 헤더","공급자등록 / 승인현황 / 구매내역 3행"],
+      rules: ["각 행에 1줄 디스크립션"]
+    },
+    html() {
+      return `
+        ${G.header("B2B도매몰", false)}
+        <div class="pad">${G.bnav("b2b").replace('class="bnav"','class="bnav" style="position:absolute"')}
+          <div class="card" style="padding:0;overflow:hidden">
+            <div style="padding:12px 14px;border-bottom:1px solid #f3f3f3;display:flex;align-items:center;gap:6px">
+              <strong style="color:#2563eb">𝔹 BIZLINK</strong><span class="xs">카드결제 서비스</span>
+            </div>
+            ${[
+              ["B2B공급자 정보등록","거래처 공급자를 등록합니다"],
+              ["도매몰 공급자 승인현황","등록한 공급자 승인 상태 확인"],
+              ["구매내역","B2B 구매 내역 조회"]
+            ].map(([t,d])=>`
+              <div class="row" style="padding:14px;border-bottom:1px solid #f5f5f5">
+                <div><div style="font-size:13px;font-weight:600">${t}</div><div class="xs">${d}</div></div>
+                <span>›</span>
+              </div>`).join("")}
+          </div>
+        </div>
+        ${G.bnav("b2b")}`;
+    }
+  },
+  {
+    id: "supplier-reg", group: "비즈링크", name: "16. 공급자 등록 1~3·완료", route: "/b2b/supplier-register",
+    desc: {
+      purpose: "공급자 기본·계좌·서류 3스텝 등록.",
+      layout: ["orange progress","Step1 기본정보","Step2 계좌+인증(송금자명 필수)","Step3 필수서류 3종","완료 모달"],
+      rules: ["송금자명 미등록 시 Step2 차단","서류: 사업자등록증/통장사본/거래명세서","승인 영업일 1~2일"]
+    },
+    html() {
+      return `
+        ${G.header("B2B구매대행 공급자(거래처) 정보 등록")}
+        <div class="progress orange"><i style="width:66%"></i></div>
+        <div class="pad-nb">
+          <p style="font-size:14px;font-weight:600;margin-bottom:12px">거래 상대방의 계좌정보를 입력해주세요. <span class="pill">Step 2</span></p>
+          <div class="label">송금자명칭</div>
+          <div class="input" style="background:#f7f7f7;display:flex;align-items:center">ㅋㅋㅋ</div>
+          <div class="label">거래처 은행</div>
+          <select class="input"><option>신한은행</option></select>
+          <div class="label">거래처 계좌번호</div>
+          <input class="input" value="110369844940" />
+          <button class="btn btn-o">계좌인증</button>
+          <p class="hint">* 계좌번호의 유효성 검사만 진행되며, 상대방에게 연락이 가지 않습니다.</p>
+          <div class="grid2" style="margin-top:14px"><button class="btn btn-ol">이전</button><button class="btn btn-o">다음</button></div>
+        </div>`;
+    }
+  },
+  {
+    id: "supplier-status", group: "비즈링크", name: "17. 공급자 승인현황", route: "/b2b/supplier-status",
+    desc: {
+      purpose: "공급자 승인 상태 목록.",
+      layout: ["기간·상태 필터","카드: 번호·상태pill·이름·일시·상세보기"],
+      rules: ["상태: 대기/완료/반려/사용정지/계약해지","반려 시 사유·재승인일시 노출"]
+    },
+    html() {
+      return `
+        ${G.header("B2B구매대행 공급자 승인현황")}
+        <div style="padding:10px 14px;display:flex;gap:6px;border-bottom:1px solid var(--line)">
+          <input class="input" type="date" style="margin:0;height:32px;flex:1;font-size:11px" value="2025-09-01" />
+          <span class="xs">~</span>
+          <input class="input" type="date" style="margin:0;height:32px;flex:1;font-size:11px" value="2025-09-30" />
+          <select class="input" style="margin:0;height:32px;width:90px;font-size:11px"><option>승인 상태</option></select>
+        </div>
+        <div class="pad">
+          <div class="card">
+            <div class="row"><strong style="font-size:12px">B2B-202509-001</strong><span class="pill">승인완료</span></div>
+            <p class="xs" style="margin-top:8px">공급자명 : (주)샘플공급</p>
+            <p class="xs">등록일시 : 2025-09-10 14:22</p>
+            <button class="btn" style="margin-top:10px;background:#f3f3f3;color:#555;height:36px;font-size:12px">상세보기</button>
+          </div>
+          <div class="card">
+            <div class="row"><strong style="font-size:12px">B2B-202509-002</strong><span class="pill rej">승인반려</span></div>
+            <p class="xs" style="margin-top:8px">공급자명 : 테스트상사</p>
+            <p class="warn">반려사유 : 거래명세서 기간 미충족</p>
+            <button class="btn" style="margin-top:10px;background:#f3f3f3;color:#555;height:36px;font-size:12px">상세보기</button>
+          </div>
+        </div>`;
+    }
+  },
+  {
+    id: "supplier-detail", group: "비즈링크", name: "18. 공급자 상세·재승인", route: "/b2b/supplier-status/[id]",
+    desc: {
+      purpose: "공급자 상세 + 반려 시 보완서류·재승인.",
+      layout: ["정보 테이블","계좌정보 블록","추가서류 + 재승인 요청","보완서류 모달 / 접수 완료 모달"],
+      rules: ["추가서류 없으면 재승인 disabled"]
+    },
+    html() {
+      return `
+        ${G.header("B2B구매대행 공급자 승인현황 상세")}
+        <div class="pad-nb">
+          <div class="card" style="padding:0;overflow:hidden">
+            ${[["서비스 분류","상품대금"],["공급자명","테스트상사"],["승인상태","승인반려"],["승인반려사유","거래명세서 기간 미충족"]].map(([a,b])=>`
+              <div class="row" style="padding:12px 14px;border-bottom:1px solid #f5f5f5;font-size:12px">
+                <span class="muted" style="width:110px">${a}</span><span style="${a.includes("반려사유")||a.includes("상태")?"color:#e11;font-weight:700":""}">${b}</span>
+              </div>`).join("")}
+            <div style="padding:12px 14px;font-size:12px">
+              <span class="muted">추가서류</span>
+              <div style="color:var(--dd-orange);margin-top:6px">+ 추가서류 등록</div>
+            </div>
+          </div>
+          <div class="card">
+            <div style="font-weight:700;font-size:12px;margin-bottom:8px">계좌정보 등록 상세</div>
+            ${[["은행","국민은행"],["계좌번호","123456789012"],["예금주명","홍길동"],["송금자명칭","ㅋㅋㅋ"]].map(([a,b])=>`<div class="detail-row"><span>${a}</span><span>${b}</span></div>`).join("")}
+          </div>
+          <button class="btn disabled">재승인 요청</button>
+          <p class="hint">※ 보완서류 저장 후 재승인 요청이 가능합니다.</p>
+        </div>`;
+    }
+  },
+  {
+    id: "profile", group: "내정보", name: "19. 내정보", route: "/profile",
+    desc: {
+      purpose: "가맹점 계정 정보 + 설정 메뉴.",
+      layout: ["아이디/가맹점/코드/버전","메뉴 5 + 로그아웃"],
+      rules: ["chevron orange"]
+    },
+    html() {
+      return `
+        ${G.header("내정보", false)}
+        <div class="pad">
+          <div class="card">
+            ${[["아이디","ST001"],["가맹점명","D [불광]짬뽕의달인…"],["코드","S285489"],["버전","1.1.0"]].map(([a,b])=>`<div class="detail-row"><span>${a}</span><span>${b}</span></div>`).join("")}
+          </div>
+          ${["🔒 비밀번호 변경","💳 결제카드 등록 및 관리","👤 계약결제 송금자명 설정","📊 결제승인한도","🔔 푸시 알림 설정","↩ 로그아웃"].map(t=>`
+            <div class="card row" style="padding:14px"><span style="font-size:13px">${t}</span><span style="color:var(--dd-orange)">›</span></div>
+          `).join("")}
+        </div>
+        ${G.bnav("profile")}`;
+    }
+  },
+  {
+    id: "card", group: "내정보", name: "20. 카드등록 설정", route: "/profile/card",
+    desc: {
+      purpose: "상점 정보·주의사항·등록 카드 슬롯 관리.",
+      layout: ["상점 코드/명칭/상태","주의사항 9개+약관","등록순서","카드 썸네일+추가 슬롯","카드삭제"],
+      rules: ["최대 7장","추가 → /profile/card/new"]
+    },
+    html() {
+      return `
+        ${G.header("카드등록 설정")}
+        <div class="pad-nb">
+          <div class="card">
+            ${[["상점 코드","S285489"],["상점 명칭","D [불광]짬뽕의달인…"],["상점 상태","정상"]].map(([a,b])=>`<div class="detail-row"><span style="font-weight:700;color:#333">${a}</span><span>${b}</span></div>`).join("")}
+          </div>
+          <div class="card" style="background:#f7f7f7">
+            <div style="font-weight:700;font-size:13px;margin-bottom:8px">⚠ 카드 등록 및 결제 시 주의사항</div>
+            <p class="xs">• 본 서비스는 고객이 등록한 카드로 결제가 진행됩니다.</p>
+            <p class="xs">• 카드 정보는 저장되지 않으며 PG사 암호화 처리…</p>
+            <p class="xs" style="text-align:center;margin-top:10px;text-decoration:underline">전자금융거래 기본 약관 보기</p>
+          </div>
+          <div style="display:flex;gap:10px;overflow-x:auto;padding:4px 0">
+            <div style="text-align:center;width:88px;flex-shrink:0">
+              <div style="width:72px;height:52px;margin:0 auto;border:2px solid var(--dd-green);border-radius:12px;background:#f3f3f3;display:flex;align-items:center;justify-content:center">💳</div>
+              <div class="xs" style="margin-top:4px">신한/0153</div>
+            </div>
+            <div style="text-align:center;width:88px;flex-shrink:0">
+              <div style="width:72px;height:52px;margin:0 auto;border:2px dashed #ccc;border-radius:12px;background:#f9f9f9;display:flex;align-items:center;justify-content:center;color:#aaa;font-size:20px">+</div>
+              <div class="xs" style="margin-top:4px">카드 등록</div>
+            </div>
+          </div>
+          <div style="text-align:right;margin-top:10px"><button class="btn btn-od" style="width:auto;display:inline-flex;height:34px;padding:0 12px;font-size:12px">🗑 카드삭제</button></div>
+        </div>
+        ${G.bnav("card")}`;
+    }
+  },
+  {
+    id: "card-new", group: "내정보", name: "21. 카드 신규등록", route: "/profile/card/new",
+    desc: {
+      purpose: "카드·소유자 정보 입력 및 약관 동의 후 등록.",
+      layout: ["결제정보(번호4칸·유효기간·PW2자리)","인증정보(이름·생년월일·전화)","유의사항","약관 전체동의","등록하기"],
+      rules: ["전 필드+동의 시 green CTA 활성"]
+    },
+    html() {
+      return `
+        ${G.header("카드등록")}
+        <div class="pad-nb">
+          <div style="font-weight:800;margin-bottom:4px">💳 결제정보</div>
+          <p class="xs" style="margin-bottom:10px">결제에 사용하실 카드 정보를 입력하세요</p>
+          <div class="label">카드번호</div>
+          <div class="grid2" style="grid-template-columns:repeat(4,1fr);margin-bottom:10px">
+            <input class="input" style="margin:0;text-align:center" placeholder="1234" />
+            <input class="input" style="margin:0;text-align:center" placeholder="1234" />
+            <input class="input" style="margin:0;text-align:center" placeholder="1234" />
+            <input class="input" style="margin:0;text-align:center" placeholder="1234" />
+          </div>
+          <div class="label">유효기간</div>
+          <div class="grid2"><input class="input" placeholder="MM" /><input class="input" placeholder="YY" /></div>
+          <div style="font-weight:800;margin:8px 0 4px">🛡 인증정보</div>
+          <div class="label">이름</div><input class="input" placeholder="카드 소유자 이름" />
+          <div class="label">휴대전화</div><input class="input" placeholder="숫자만" />
+          <div style="border:1px solid #ddd;border-radius:12px;overflow:hidden;margin:12px 0">
+            <div style="background:#f7f7f7;padding:12px;font-size:13px;font-weight:700">✓ 약관에 전체 동의 합니다</div>
+            <div class="row" style="padding:12px;font-size:13px;border-top:1px solid #eee"><span>전자금융거래 기본약관</span>›</div>
+          </div>
+          <button class="btn btn-g">등록하기</button>
+        </div>`;
+    }
+  },
+  {
+    id: "limit", group: "내정보", name: "22. 결제승인한도", route: "/profile/limit",
+    desc: {
+      purpose: "계약결제/B2B 일·월 한도 조회(읽기전용).",
+      layout: ["2탭","일/월 한도 필드"],
+      rules: ["편집 불가"]
+    },
+    html() {
+      return `
+        ${G.header("결제승인한도")}
+        <div style="display:grid;grid-template-columns:1fr 1fr;background:#fff;border-bottom:1px solid #ddd">
+          <div style="padding:12px;text-align:center;font-size:13px;font-weight:700;color:var(--dd-green);border-bottom:2px solid var(--dd-green)">계약결제 한도</div>
+          <div style="padding:12px;text-align:center;font-size:13px;color:#bbb">B2B구매대행 구매한도</div>
+        </div>
+        <div class="pad-nb">
+          <div class="label">일 승인한도</div>
+          <div class="input row" style="background:#fff"><strong>10,000,000</strong><span class="muted">원</span></div>
+          <div class="label">월 승인한도</div>
+          <div class="input row" style="background:#fff"><strong>50,000,000</strong><span class="muted">원</span></div>
+        </div>`;
+    }
+  },
+  {
+    id: "password", group: "내정보", name: "23. 비밀번호 변경", route: "/profile/password",
+    desc: {
+      purpose: "휴대폰 인증 후 비밀번호 변경 2스텝.",
+      layout: ["A: 아이디·단말기번호·인증번호 전송","B: 인증번호·새PW·확인·변경하기"],
+      rules: ["불일치 시 red 경고","인증 전송 후 change 스텝 전환"]
+    },
+    html() {
+      return `
+        ${G.header("인증번호 요청")}
+        <div class="pad-nb">
+          <div class="label">아이디</div><input class="input" value="ST001" disabled style="background:#f7f7f7" />
+          <div class="label">인증 단말기 번호</div><input class="input" value="01091812230" />
+          <button class="btn btn-o">인증번호 전송</button>
+          <div style="margin-top:24px;padding-top:16px;border-top:1px dashed #ddd">
+            <div class="xs" style="margin-bottom:10px">↓ 전송 후 전환되는 화면</div>
+            <div style="font-weight:800;margin-bottom:10px">비밀번호 변경</div>
+            <div class="label">인증번호</div><input class="input" placeholder="6자리" />
+            <div class="label">새 비밀번호</div><input class="input" type="password" />
+            <div class="label">새 비밀번호 확인</div><input class="input" type="password" />
+            <button class="btn btn-o">변경하기</button>
+          </div>
+        </div>`;
+    }
+  },
+  {
+    id: "push", group: "내정보", name: "24. 푸시 알림", route: "/profile/push",
+    desc: {
+      purpose: "계약 관련 푸시 ON/OFF.",
+      layout: ["토글 1개 + 설명"],
+      rules: ["ON=green track"]
+    },
+    html() {
+      return `
+        ${G.header("푸시 알림")}
+        <div class="pad-nb">
+          <div class="row" style="padding:12px 0;border-bottom:1px solid var(--line)">
+            <span style="font-size:15px">계약 관련 알림</span>
+            <div class="toggle"></div>
+          </div>
+          <p class="hint">• 계약 승인이나 반려 또는 결제 관련 알림을 받습니다.</p>
+        </div>`;
+    }
+  },
+  {
+    id: "sender", group: "내정보", name: "25. 송금자 명칭", route: "/profile/sender-name",
+    desc: {
+      purpose: "송금 시 상대 통장에 표시될 명칭 변경.",
+      layout: ["기존 명칭(disabled)","변경 명칭","저장"],
+      rules: ["빈 값이면 저장 disabled"]
+    },
+    html() {
+      return `
+        ${G.header("송금자 명칭설정")}
+        <div class="pad-nb">
+          <div class="label">기존 송금자 명칭</div>
+          <input class="input" value="ㅋㅋㅋ" disabled style="background:#fff" />
+          <div class="label">변경할 송금자 명칭</div>
+          <input class="input" placeholder="변경할 송금자 명칭을 입력해주세요." />
+          <button class="btn btn-o">저장</button>
+        </div>`;
+    }
+  },
+  {
+    id: "food", group: "기타", name: "26. 식자재몰", route: "/food",
+    desc: {
+      purpose: "식자재 새벽배송 진입(준비중).",
+      layout: ["Header + 중앙 준비중 문구"],
+      rules: ["실서비스 미연결"]
+    },
+    html() {
+      return `
+        ${G.header("식자재몰", false)}
+        <div style="height:400px;display:flex;align-items:center;justify-content:center;color:#aaa;font-size:14px">준비 중입니다.</div>`;
+    }
+  }
+];
+
+function renderNav() {
+  const el = document.getElementById("navList");
+  let html = "", last = "";
+  screens.forEach(s => {
+    if (s.group !== last) { html += `<div class="group">${s.group}</div>`; last = s.group; }
+    html += `<button type="button" data-id="${s.id}">${s.name}</button>`;
+  });
+  el.innerHTML = html;
+  el.querySelectorAll("button").forEach(btn => {
+    btn.addEventListener("click", () => show(btn.dataset.id));
+  });
+}
+
+function show(id) {
+  const s = screens.find(x => x.id === id);
+  if (!s) return;
+  document.querySelectorAll(".nav button").forEach(b => b.classList.toggle("active", b.dataset.id === id));
+  document.getElementById("stageTitle").textContent = `${s.name}  ·  ${s.route}`;
+  document.getElementById("phone").innerHTML = s.html();
+  document.getElementById("desc").innerHTML = `
+    <span class="tag">${s.group}</span>
+    <h2>${s.name}</h2>
+    <div class="route">${s.route}</div>
+    <h3>목적</h3><p>${s.desc.purpose}</p>
+    <h3>레이아웃</h3><ul>${s.desc.layout.map(i=>`<li>${i}</li>`).join("")}</ul>
+    <h3>규칙 / 인터랙션</h3><ul>${s.desc.rules.map(i=>`<li>${i}</li>`).join("")}</ul>
+  `;
+  location.hash = id;
+}
+
+renderNav();
+show((location.hash || "#login").slice(1) || "login");
+</script>
+</body>
+</html>
