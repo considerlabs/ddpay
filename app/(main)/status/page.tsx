@@ -130,11 +130,11 @@ function ManualPaymentSheet({
   const [amount, setAmount] = useState(contract.totalAmount);
   const [editingAmount, setEditingAmount] = useState(false);
   const [paymentType, setPaymentType] = useState<"일반" | "분할">("일반");
-  const [splitInputs, setSplitInputs] = useState<string[]>([]);
+  const splitCount = getSplitCount(amount);
+  const [splitInputs, setSplitInputs] = useState<string[]>(() => Array(splitCount - 1).fill(""));
   const selectedCard = mockUser.cards.find((c) => c.id === selectedCardId) ?? mockUser.cards[0];
   const today = new Date().toISOString().slice(0, 10);
 
-  const splitCount = getSplitCount(amount);
   const [prevSplitCount, setPrevSplitCount] = useState(splitCount);
   if (prevSplitCount !== splitCount) {
     setPrevSplitCount(splitCount);
@@ -268,7 +268,7 @@ function ManualPaymentSheet({
                       ) : (
                         <input
                           type="number"
-                          value={splitInputs[i]}
+                          value={splitInputs[i] ?? ""}
                           onChange={(e) => {
                             const next = [...splitInputs];
                             next[i] = e.target.value;
