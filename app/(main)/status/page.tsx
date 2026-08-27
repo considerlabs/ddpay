@@ -160,8 +160,8 @@ function ManualPaymentSheet({
   ];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-6">
-      <div className="bg-white rounded-2xl p-6 w-full max-w-xs flex flex-col items-center gap-4 shadow-xl">
+    <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/40 px-6">
+      <div className="bg-white rounded-2xl p-6 w-full max-w-xs max-h-[85vh] overflow-y-auto flex flex-col items-center gap-4 shadow-xl">
         <div className="w-16 h-16 rounded-full bg-dd-orange-light flex items-center justify-center">
           <CreditCard className="text-[var(--dd-orange)]" size={28} />
         </div>
