@@ -1,4 +1,4 @@
-export type ContractType = "월세" | "물류대금" | "경조사비" | "학원비" | "운영/용역비" | "배달비";
+export type ContractType = "월세" | "물류대금" | "경조사비" | "학원비" | "운영/용역비" | "운영비" | "인건비" | "배달비";
 export type ApprovalStatus = "승인대기" | "승인완료" | "반려";
 export type PaymentMethod = "수동" | "자동";
 export type PaymentStatus = "결제완료" | "결제실패" | "송금대기" | "송금완료" | "결제대기";
@@ -248,4 +248,25 @@ export function getMonthlyStats(contracts: Contract[]) {
   const rejected = contracts.filter((c) => c.approvalStatus === "반려").length;
   const approved = contracts.filter((c) => c.approvalStatus === "승인완료").length;
   return { pending, rejected, approved, total: contracts.length };
+}
+
+// 신규 계약등록 화면에서 등록한 계약을 브라우저에 보관해 등록현황 목록에도 노출한다.
+const USER_CONTRACTS_KEY = "ddpay:userContracts";
+
+export function loadUserContracts(): Contract[] {
+  if (typeof window === "undefined") return [];
+  try {
+    return JSON.parse(localStorage.getItem(USER_CONTRACTS_KEY) ?? "[]");
+  } catch {
+    return [];
+  }
+}
+
+export function addUserContract(contract: Contract) {
+  const next = [contract, ...loadUserContracts()];
+  localStorage.setItem(USER_CONTRACTS_KEY, JSON.stringify(next));
+}
+
+export function getAllContracts(): Contract[] {
+  return [...loadUserContracts(), ...mockContracts];
 }

@@ -3,7 +3,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { PageHeader } from "@/components/page-header";
 import { StatusBadge } from "@/components/status-badge";
-import { mockContracts, mockUser, formatAmount, type Contract } from "@/lib/mock-data";
+import { getAllContracts, mockContracts, mockUser, formatAmount, type Contract } from "@/lib/mock-data";
 import { ChevronRight, CreditCard, Pencil } from "lucide-react";
 
 const MONTHS = ["전체", "1월", "2월", "3월", "4월", "5월", "6월"];
@@ -25,8 +25,13 @@ function getSplitCount(amount: number) {
 export default function StatusPage() {
   const [month, setMonth] = useState("전체");
   const [status, setStatus] = useState("전체");
-  const [contracts, setContracts] = useState(mockContracts);
+  const [contracts, setContracts] = useState<Contract[]>(mockContracts);
   const [payingContract, setPayingContract] = useState<Contract | null>(null);
+  const [loadedFromStorage, setLoadedFromStorage] = useState(false);
+  if (typeof window !== "undefined" && !loadedFromStorage) {
+    setLoadedFromStorage(true);
+    setContracts(getAllContracts());
+  }
 
   const filtered = contracts.filter((c) => {
     if (status !== "전체" && c.approvalStatus !== status) return false;

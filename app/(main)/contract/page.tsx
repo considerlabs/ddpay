@@ -1,12 +1,12 @@
 "use client";
-import { useState } from "react";
+import { useId, useState } from "react";
 import { useRouter } from "next/navigation";
 import { PageHeader } from "@/components/page-header";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Home, Building2, X } from "lucide-react";
+import { addUserContract, type Contract, type ContractType } from "@/lib/mock-data";
 
-type ContractType = "월세" | "경조사비" | "학원비" | "운영비" | "인건비" | "배달비";
 type CounterpartyType = "개인" | "사업자";
 
 const CONTRACT_TYPES: { label: ContractType; emoji: string }[] = [
@@ -27,6 +27,7 @@ const SERVICE_FEE_RATE = 0.066;
 
 export default function ContractPage() {
   const router = useRouter();
+  const contractId = useId();
   const [step, setStep] = useState(1);
   const totalSteps = 4;
 
@@ -53,8 +54,33 @@ export default function ContractPage() {
   const totalAmount = amount ? Math.round(Number(amount) * (1 + SERVICE_FEE_RATE)) : 0;
 
   function handleNext() {
-    if (step < totalSteps) setStep(step + 1);
-    else setStep(5); // done
+    if (step < totalSteps) {
+      setStep(step + 1);
+      return;
+    }
+    const contract: Contract = {
+      id: contractId,
+      type: contractType!,
+      name: contractName,
+      registeredAt: new Date().toISOString().slice(0, 10),
+      approvalStatus: "승인대기",
+      paymentMethod: payMethod,
+      transferAmount: Number(amount),
+      totalAmount,
+      senderName,
+      counterparty: {
+        type: cpType,
+        name,
+        idNumber,
+        bank,
+        accountNumber: accountNo,
+        accountHolder: name,
+      },
+      documents: docs.map((d) => d.file),
+      completedCount: 0,
+    };
+    addUserContract(contract);
+    setStep(5); // done
   }
 
   function handlePrev() {
