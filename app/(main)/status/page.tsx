@@ -165,7 +165,7 @@ function ManualPaymentSheet({
     ["송금액", formatAmount(contract.transferAmount)],
     ["결제금액", formatAmount(amount)],
     ["결제카드", selectedCard ? `${selectedCard.name}(${selectedCard.last4})` : "-"],
-    ["할부기간", paymentType === "일반" ? "일시불" : `분할 ${splitCount}회`],
+    ["결제구분", paymentType === "일반" ? "일시불" : `분할결제(${splitCount}회)`],
   ];
 
   return (
@@ -295,6 +295,12 @@ function ManualPaymentSheet({
                 )}
                 {lastAmount < 0 && (
                   <p className="text-xs text-red-500">입력한 금액의 합이 결제금액을 초과했습니다.</p>
+                )}
+                {lastAmount === 0 && (
+                  <p className="text-xs text-red-500">마지막 회차에 남는 금액이 없습니다. 다른 회차 금액을 줄여주세요.</p>
+                )}
+                {!splitHasDuplicate && lastAmount > 0 && !splitAllFilled && (
+                  <p className="text-xs text-gray-400">모든 회차에 금액을 입력해야 결제하기 버튼이 활성화됩니다.</p>
                 )}
               </div>
             )}
