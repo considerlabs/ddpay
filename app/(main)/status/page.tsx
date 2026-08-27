@@ -148,9 +148,14 @@ function ManualPaymentSheet({
   const numericSplitInputs = splitInputs.map((v) => (v === "" ? 0 : Number(v)));
   const sumEntered = numericSplitInputs.reduce((a, b) => a + b, 0);
   const lastAmount = amount - sumEntered;
-  const allSplitValues = [...numericSplitInputs, lastAmount];
   const splitAllFilled = numericSplitInputs.every((v) => v > 0) && lastAmount > 0;
-  const splitHasDuplicate = new Set(allSplitValues).size !== allSplitValues.length;
+  // 아직 입력 안 한 칸(빈 문자열)은 전부 0으로 취급해 서로 중복 판정되므로,
+  // 실제로 입력했거나 자동 계산된 마지막 칸의 값만 중복 검사 대상으로 삼는다.
+  const filledSplitValues = [
+    ...splitInputs.filter((v) => v !== "").map(Number),
+    lastAmount,
+  ];
+  const splitHasDuplicate = new Set(filledSplitValues).size !== filledSplitValues.length;
   const splitValid = splitAllFilled && !splitHasDuplicate;
 
   const rows: [string, string][] = [
